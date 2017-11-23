@@ -1,0 +1,93 @@
+
+--->
+
+    completo hola = 3
+    completo holaa
+    completo cosa32 = 32
+    completo a33
+    completo hola33 = 44
+    completo id = 44
+
+    juez como = false
+    juez verdad12 = true
+    juez a335
+    juez a1111
+
+    letras prueba1
+    letras prueba2 = "hola como estas"
+    letras prueba3 = "hola"+"como" +  " estas" + "jsaaksj" + "kjdakjas"
+    letras prueba4 = "hola como" + "estas"
+    letras prueba5 = ""
+    letras prueba6 = " "
+  
+    enviar ( " como estas " )
+    enviar ( "hola como" + "estas" )
+    enviar ( "hola" + "como" +"estas" )
+    enviar (  )
+    enviar ( a33 + id )
+    enviar ( 213123 )
+    enviar ( a33 + holaa )
+    enviar ( como + a1111 + a335 )
+    enviar ( prueba1 + prueba4 + prueba3 + prueba6 )
+
+    holaa = cosa32
+    holaa  = cosa32 + cosa32
+    holaa = cosa32
+    holaa = cosa32 + cosa32 * cosa32 + cosa32
+    holaa = cosa32 + 123 - 123 + 12312 * cosa32 / cosa32 % cosa32
+
+    verdad12 = true
+    verdad12 = false
+    verdad12 =  a1111  
+
+    prueba3 = "hola" + "como" +  prueba4 + "jsaaksj" + "kjdakjas"
+    prueba3 = "hola"  
+    prueba3 = prueba4 + "como" +  prueba4 + prueba4 + "kjdakjas"
+    prueba3 = prueba4
+
+    verdad ( hola33 ) >>
+        verdad ( 78787 < hola33 ) >>  
+            verdad ( 78787 != hola33 ) >>
+                verdad ( 78787 >= hola33 ) >>
+                    verdad ( 78787 == hola33 ) >>
+                        verdad ( 78787 <= 78787 ) >>
+                        <<
+                    <<
+                <<
+            <<
+        <<
+    <<
+
+    xveces ( id = 1212 ; id < 200 ; id ++ ) >>
+        xveces ( id = id ; id < 200 ; id ++ ) >>
+            xveces ( id = 1212 ; 200 < id ; id ++ ) >>
+                xveces ( id = 1212 ; 200 < id ; id -- ) >>
+                    xveces ( id = 1212 * 12 ; 200 < id ; id -- ) >>
+                        xveces ( id = 1212 * id ; id < id ; id -- ) >>
+                            xveces ( id = id * 12 ; 200 < id ; id -- ) >>
+                                verdad ( 78787 == hola33 ) >>
+                                    verdad ( 78787 <= hola33 ) >>
+                                    <<
+                                <<
+                            <<
+                        <<
+                    <<
+                <<
+            <<
+        <<
+    <<    
+
+    obtener ( id ) 
+    durante ( hola33 ) >>
+        durante ( 78787 < hola33 ) >>  
+            durante ( 78787 != hola33 ) >>
+                durante ( 78787 >= hola33 ) >>
+                    durante ( 78787 == hola33 ) >>
+                        durante ( 78787 <= hola33 ) >>
+                        <<
+                    <<
+                <<
+            <<
+        <<
+    <<
+<---

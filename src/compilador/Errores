@@ -1,0 +1,11 @@
+1:Lexico:Caracter fuera de nuestro alfabeto
+2:Lexico:Palabra no declarada
+3:Sintactico:Error de Sintaxis
+4:Semantico:Intenta delclarar fuera del bloque
+5:Semantico:Variable no declarada
+6:Semantico:Los tipos de variable no coinciden 
+7:Semantico:Falta que declare el incio del codigo
+8:Semantico:Falta que declare el fin del codigo
+9:Semantico:Solo se puede declarar una vez el inicio de codigo
+10:Semantico:Ya tienes abierto un bloque de declaracion
+11:Semantico:No tienes abierto un bloque de declaracion
