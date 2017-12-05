@@ -52,13 +52,14 @@ public class Corelli {
             casos.AddCode("Empieza:");
             casos.AddCode("mov Ax, @Data");
             casos.AddCode("mov Ds, Ax");
-
+            cLinea = 1;//Variable utilizada para contar las lienas 
             for (String Linea : Lineas) {
                 StringTokenizer tokenizer = new StringTokenizer(Linea);
                 if (tokenizer.hasMoreTokens()) {
                     String token = tokenizer.nextToken();
-                    casos.Casos(token, tokenizer, Linea, 0, true);
+                    casos.Casos(token, tokenizer, Linea, cLinea, true);
                 }
+            cLinea++;
             }
             casos.AddCode("mov AX, 4C00h");
             casos.AddCode("int 21h");

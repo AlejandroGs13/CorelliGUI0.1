@@ -9,6 +9,7 @@ import compilador.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
@@ -98,6 +99,8 @@ public class main extends JFrame implements ActionListener {
         taCode = new JTextArea();
         taCode.setWrapStyleWord(true);
         taCode.setLineWrap(true);
+        Font font = new Font("Dialog", Font.ITALIC, 14);
+        taCode.setFont(font);
         JScrollPane sp = new JScrollPane(taCode);
         sp.setSize(675, 350);
         sp.setLocation(22, 20);
@@ -140,7 +143,6 @@ public class main extends JFrame implements ActionListener {
                 taDebug.setText("");
                 archivos.writerFile(taCode.getText(), temp, false);
                 corelli.compilador(temp);
-                System.out.println("111:" + corelli.EnviarErrores() + "22");
                 taDebug.setText(corelli.EnviarErrores());
                 primera = false;
             }

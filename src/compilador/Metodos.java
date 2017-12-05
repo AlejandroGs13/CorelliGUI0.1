@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
  */
 public class Metodos {
 
+    private ArrayList<String> asmVariables = new ArrayList<>();
     private ArrayList<String> Code = new ArrayList<>();
     private ArrayList<String> Data = new ArrayList<>();
     private ArrayList<String> Errores = new ArrayList<>();
@@ -102,7 +103,7 @@ public class Metodos {
                     String conten = "";
                     for (int i = 1; i < contenido.length; i = i + 2) {
                         int con = contenido[i].length();
-                        conten = conten + " " + contenido[i];
+                        conten = conten + contenido[i];
                     }
                     addVar(name, "letras", conten);
                 }
@@ -127,7 +128,7 @@ public class Metodos {
             System.out.println(Errore);
         });
     }
-    
+
     public String enviarErros() {
         String error = "";
         for (String Errore : Errores) {
@@ -135,6 +136,7 @@ public class Metodos {
         }
         return error;
     }
+
     public boolean comReser(String Token) {
         return Reservadas().contains(Token);
     }
@@ -193,6 +195,20 @@ public class Metodos {
                                     break;
                                 }
                             }
+                        }
+                    }
+                }
+            } else {
+                String[] msjaux = Linea.split("\\(");
+                String[] msjaux2 = msjaux[1].split("\\)");
+                String[] msj = msjaux2[0].split("\\+");
+
+                for (String string : msj) {
+                    if (!string.contains("\"")) {
+                        StringTokenizer st = new StringTokenizer(string);
+                        String token = st.nextToken();
+                        if (!vName.contains(token)) {
+                            AddError("Error Semantico: Variable no declarada '" + string + "' : Linea:" + cLinea);
                         }
                     }
                 }
@@ -511,25 +527,85 @@ public class Metodos {
         });
     }
 
-    public void addImprimir(String Linea, int nvar) {
-        String[] msjaux = Linea.split("\"");
+    public void addImprimir(String Linea, int nvar, int cLine) {
+        boolean entro = false;
+        boolean entro2 = false;
+        String vv = "";
+        String[] msjaux = Linea.split("\\(");
+        String[] msjaux2 = msjaux[1].split("\\)");
+        String[] msj = msjaux2[0].split("\\+");
         String contenido = "";
-        for (int i = 1; i < msjaux.length; i = i + 2) {
-            contenido = contenido + msjaux[i];
+        for (String msj1 : msj) {
+            StringTokenizer st = new StringTokenizer(msj1);
+            String token = st.nextToken();
+            if (msj1.contains("\"")) {
+                entro = true;
+                String[] texto = msj1.split("\"");
+                contenido = contenido + texto[1];
+            } else if (!asmVariables.contains(token)) {
+                entro = true;
+                System.out.println(vValor.get(vName.indexOf(token)));
+                contenido = contenido + vValor.get(vName.indexOf(token));
+            } else {
+                vv = token;
+                entro2 = true;
+            }
         }
-        Code.add("mov Dx, Offset var" + nvar);
-        Code.add("mov Ah, 9");
-        Code.add("Int 21h");
-        Data.add("var" + nvar + " DB '" + contenido + "',10,13,'$'");
+        if (entro) {
+            Code.add("mov ah,09");
+            Code.add("lea dx,salto" + nvar);
+            Code.add("int 21h");
+            Data.add("salto" + nvar + " DB ' ',10,13,'$'");
+            Code.add("mov Dx, Offset var" + nvar);
+            Code.add("mov Ah, 9");
+            Code.add("Int 21h");
+            Data.add("var" + nvar + " DB '" + contenido + "',10,13,'$'");
+            if (entro2) {
+                Code.add("mov bl," + vv);
+                Code.add("mov dl,bl");
+                Code.add("add dl,30h");
+                Code.add("mov ah, 02h");
+                Code.add("int 21h");
+            }
+        }
+    }
+
+    public void addObtener(String linea, int nvar, int cLine) {
+        StringTokenizer tokenizer = new StringTokenizer(linea);
+        tokenizer.nextToken();
+        tokenizer.nextToken();
+        String var = tokenizer.nextToken();
+        Code.add("mov ah,09");
+        Code.add("lea dx,salto" + nvar);
+        Code.add("int 21h");
+        Data.add("salto" + nvar + " DB ' ',10,13,'$'");
+        Data.add(var + " DB 0");
+        Code.add("mov ah,01h");
+        Code.add("int 21h");
+        Code.add("sub al, 30h");
+        Code.add("mov " + var + ", al");
+        if (!asmVariables.contains(var)) {
+            asmVariables.add(var);
+        }
 
     }
-    public void vaciarErrores(){
-    Errores.clear();
+
+    public void vaciarErrores() {
+        Errores.clear();
     }
-    public void vaciarCode(){
-    Code.clear();
+
+    public void vaciarCode() {
+        Code.clear();
     }
-    public void vaciarData(){
-    Data.clear();
+
+    public void vaciarData() {
+        Data.clear();
+    }
+
+    public void vacirVariables() {
+        vName.clear();
+        vTipo.clear();
+        vValor.clear();
+        asmVariables.clear();
     }
 }

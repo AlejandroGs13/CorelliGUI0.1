@@ -25,6 +25,8 @@ public class Casos {
     private boolean EndCode;//variable para comprobar si es el primer token usado.
     private Expresiones expresiones = new Expresiones();
 
+    
+    
     /*
     Constructor de la clase:
     El constructor inicia con la variable firsToken verdadedo y la cariable de codigo inicializado en falso.
@@ -83,6 +85,10 @@ public class Casos {
                     } else {
                         metodos.validateObtener(linea, cLine);
                     }
+                    if (segunda) {
+                        metodos.addObtener(linea,nvar,cLine);
+                        nvar++;
+                    }
                     break;
                 case "enviar":
                     if (!startCode || EndCode) {
@@ -92,7 +98,7 @@ public class Casos {
                     }
 
                     if (segunda) {
-                        metodos.addImprimir(linea, nvar);
+                        metodos.addImprimir(linea, nvar,cLine);
                         nvar++;
                     }
                     break;
@@ -268,5 +274,6 @@ public class Casos {
         metodos.vaciarErrores();
         metodos.vaciarCode();
         metodos.vaciarData();
+        metodos.vacirVariables();
     }
 }

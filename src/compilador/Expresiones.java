@@ -36,7 +36,7 @@ public class Expresiones {
         this.expImp = "((\"([.]*[^\"̣][\\s]*)*\"[\\s]*\\+[\\s]*)*(\"([.]*[^\"̣][\\s]*)*\"))";
         this.expImp2 = "((((\"([.]*[^\"̣][\\s]*)*\")|(" + id + "))[\\s]*\\+[\\s]*)*((\"([.]*[^\"̣][\\s]*)*\")|(" + id + ")))";
         this.letras = "([\\s]*letras[\\s]+" + id + "([\\s]+\\=[\\s]+" + expImp + ")*[\\s]*)";
-        this.enviar = "([\\s]*enviar[\\s]+\\([\\s]+((" + expImp + ")*|(" + id + "([\\s]+\\+[\\s]+" + id + ")*)|[0-9]+)[\\s]+\\)[\\s]*)";
+        this.enviar = "([\\s]*enviar[\\s]+\\([\\s]+((" + expImp + "|"+id+"|[0-9]+)*|((" + expImp + "|"+id+"|[0-9]+)([\\s]+\\+[\\s]+(" + expImp + "|"+id+"|[0-9]+))*)|[0-9]+)[\\s]+\\)[\\s]*)";
         this.opCompleto = "[\\s]*" + id + "[\\s]+\\=[\\s]+((" + id + "|[0-9]+)[\\s]+" + aritmeticas + "[\\s]+)*(" + id + "|[0-9]+)[\\s]*";
         this.opJuez = "([\\s]*" + id + "[\\s]+\\=[\\s]+(false|true|" + id + ")[\\s]*)";
         this.opLetras = "([\\s]*" + id + "[\\s]+\\=[\\s]+(" + expImp2 + ")[\\s]*)";
