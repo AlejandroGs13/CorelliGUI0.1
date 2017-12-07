@@ -25,6 +25,8 @@ public class Casos {
     private boolean EndCode;//variable para comprobar si es el primer token usado.
     private Expresiones expresiones = new Expresiones();
 
+    
+    
     /*
     Constructor de la clase:
     El constructor inicia con la variable firsToken verdadedo y la cariable de codigo inicializado en falso.
@@ -83,6 +85,10 @@ public class Casos {
                     } else {
                         metodos.validateObtener(linea, cLine);
                     }
+                    if (segunda) {
+                        metodos.addObtener(linea,nvar,cLine);
+                        nvar++;
+                    }
                     break;
                 case "enviar":
                     if (!startCode || EndCode) {
@@ -92,7 +98,7 @@ public class Casos {
                     }
 
                     if (segunda) {
-                        metodos.addImprimir(linea, nvar);
+                        metodos.addImprimir(linea, nvar,cLine);
                         nvar++;
                     }
                     break;
@@ -102,12 +108,20 @@ public class Casos {
                     } else {
                         metodos.validateVerdad(linea, cLine);
                     }
+                    if (segunda) {
+                        metodos.AddVerdad(linea,nvar);
+                        nvar++;
+                    }
                     break;
                 case "durante":
                     if (!startCode || EndCode) {
                         metodos.AddError("Error Semantico : Codigo fuera del programa : Linea:" + cLine);
                     } else {
                         metodos.validateDurante(linea, cLine);
+                    }
+                    if (segunda) {
+                        metodos.AddDurante(linea,nvar);
+                        nvar++;
                     }
                     break;
                 case "xveces":
@@ -116,12 +130,20 @@ public class Casos {
                     } else {
                         metodos.validateXveces(linea, cLine);
                     }
+                    if (segunda) {
+                        metodos.AddXveces(linea,nvar);
+                        nvar++;
+                    }
                     break;
                 case "completo":
                     if (!startCode || EndCode) {
                         metodos.AddError("Error Semantico : Codigo fuera del programa : Linea:" + cLine);
                     } else {
                         metodos.validateCompleto(linea, cLine, token, expresiones.getCompleto());
+                    }
+                    
+                    if (segunda) {
+                        metodos.AddAsmVar(linea);                       
                     }
                     break;
                 case "juez":
@@ -131,12 +153,19 @@ public class Casos {
 
                         metodos.validateCompleto(linea, cLine, token, expresiones.getJuez());
                     }
+                    
+                    if (segunda) {
+                       // metodos.AddAsmVar(linea);                       
+                    }
                     break;
                 case "letras":
                     if (!startCode || EndCode) {
                         metodos.AddError("Error Semantico : Codigo fuera del programa : Linea:" + cLine);
                     } else {
                         metodos.validateString(token, linea, cLine);
+                    }
+                    if (segunda) {
+                        metodos.AddAsmVar(linea);                       
                     }
                     break;
                 case "<<":
@@ -150,6 +179,9 @@ public class Casos {
                             metodos.parentesis(cLine, 1);
                         }
                     }
+                    if (segunda) {
+                        metodos.AddCerrar();                       
+                    }
                     break;
 
                 default:
@@ -160,6 +192,10 @@ public class Casos {
                             metodos.AddError("Error Sintactico : ' " + token + " ' : Linea:" + cLine);
                         } else {
                             metodos.validateOp(token, linea, cLine);
+                            if (segunda) {
+                               metodos.addOperaciones(linea, nvar, cLine);
+                               nvar++;
+                            }
                         }
 
                     }
@@ -268,5 +304,6 @@ public class Casos {
         metodos.vaciarErrores();
         metodos.vaciarCode();
         metodos.vaciarData();
+        metodos.vacirVariables();
     }
 }

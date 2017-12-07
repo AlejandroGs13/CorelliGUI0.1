@@ -9,6 +9,7 @@ import compilador.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
@@ -41,7 +42,7 @@ public class main extends JFrame implements ActionListener {
      */
     public main() {
         super("Corelli");
-        this.setSize(720, 680);
+        this.setSize(920, 680);
         this.setResizable(false);
         this.setDefaultCloseOperation(3);
         this.setVisible(true);
@@ -58,15 +59,15 @@ public class main extends JFrame implements ActionListener {
         taDebug = new JTextArea();
         taDebug.setEditable(false);
         JScrollPane scrollDebug = new JScrollPane(taDebug);
-        scrollDebug.setSize(680, 150);
+        scrollDebug.setSize(875, 150);
         scrollDebug.setLocation(20, 400);
         contenido.add(scrollDebug, BorderLayout.CENTER);
         /**
          * *****************************
          */
         btnRun = new JButton("Ejecutar");
-        btnRun.setSize(120, 40);
-        btnRun.setLocation(310, 600);
+        btnRun.setSize(160, 70);
+        btnRun.setLocation(370, 570);
         btnRun.setVisible(true);
         btnRun.addActionListener(this);
         contenido.add(btnRun);
@@ -77,8 +78,8 @@ public class main extends JFrame implements ActionListener {
          * *****************************
          */
         btnSave = new JButton("Guardar");
-        btnSave.setSize(120, 40);
-        btnSave.setLocation(180, 600);
+        btnSave.setSize(160, 70);
+        btnSave.setLocation(180, 570);
         btnSave.setVisible(true);
         btnSave.addActionListener(this);
         contenido.add(btnSave);
@@ -86,8 +87,8 @@ public class main extends JFrame implements ActionListener {
          * *****************************
          */
         btnOpen = new JButton("Abrir");
-        btnOpen.setSize(120, 40);
-        btnOpen.setLocation(440, 600);
+        btnOpen.setSize(160, 70);
+        btnOpen.setLocation(560, 570);
         btnOpen.setVisible(true);
         btnOpen.addActionListener(this);
         contenido.add(btnOpen);
@@ -98,8 +99,10 @@ public class main extends JFrame implements ActionListener {
         taCode = new JTextArea();
         taCode.setWrapStyleWord(true);
         taCode.setLineWrap(true);
+        Font font = new Font("Dialog", Font.ITALIC, 14);
+        taCode.setFont(font);
         JScrollPane sp = new JScrollPane(taCode);
-        sp.setSize(675, 350);
+        sp.setSize(875, 350);
         sp.setLocation(22, 20);
         sp.setRowHeaderView(new LineNumberPane(taCode));
         contenido.add(sp);
@@ -140,7 +143,6 @@ public class main extends JFrame implements ActionListener {
                 taDebug.setText("");
                 archivos.writerFile(taCode.getText(), temp, false);
                 corelli.compilador(temp);
-                System.out.println("111:" + corelli.EnviarErrores() + "22");
                 taDebug.setText(corelli.EnviarErrores());
                 primera = false;
             }
