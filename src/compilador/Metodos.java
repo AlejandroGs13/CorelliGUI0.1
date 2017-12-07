@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 public class Metodos {
 
     private ArrayList<String> asmVariables = new ArrayList<>();
+    private ArrayList<String> asmControl = new ArrayList<>();
     private ArrayList<String> Code = new ArrayList<>();
     private ArrayList<String> Data = new ArrayList<>();
     private ArrayList<String> Errores = new ArrayList<>();
@@ -67,7 +68,7 @@ public class Metodos {
                     AddError("Error Semantico: Variable reservada para el sistema '" + name + "' : Linea:" + conLine);
                     //AddError("Variable " + name + " Es reservada para el sistema, Error liena:" + conLine);
                 } else {
-                    addVar(name, token, "null");
+                    addVar(name, token, "0");
                 }
             }
         } else {
@@ -542,9 +543,8 @@ public class Metodos {
                 entro = true;
                 String[] texto = msj1.split("\"");
                 contenido = contenido + texto[1];
-            } else if (!asmVariables.contains(token)) {
+            } else if (!asmVariables.contains(token) && token.equals("[0-9]+")) {
                 entro = true;
-                System.out.println(vValor.get(vName.indexOf(token)));
                 contenido = contenido + vValor.get(vName.indexOf(token));
             } else {
                 vv = token;
@@ -552,19 +552,42 @@ public class Metodos {
             }
         }
         if (entro) {
-            Code.add("mov ah,09");
-            Code.add("lea dx,salto" + nvar);
-            Code.add("int 21h");
-            Data.add("salto" + nvar + " DB ' ',10,13,'$'");
+            Code.add("; Imprimir  ");
             Code.add("mov Dx, Offset var" + nvar);
             Code.add("mov Ah, 9");
             Code.add("Int 21h");
             Data.add("var" + nvar + " DB '" + contenido + "',10,13,'$'");
             if (entro2) {
+                String Tipo = vTipo.get(vName.indexOf(vv));
+                if (Tipo.equals("completo")) {
+                    Code.add("; Imprimir  ");
+                    Code.add("mov bl," + vv);
+                    Code.add("mov dl,bl");
+                    Code.add("add dl,30h");
+                    Code.add("mov ah, 02h");
+                    Code.add("int 21h");
+                }
+                if (Tipo.equals("letras")) {
+                    Code.add("; Imprimir  ");
+                    Code.add("mov Dx, Offset " + vv);
+                    Code.add("mov Ah, 9");
+                    Code.add("Int 21h");
+                }
+            }
+
+        }
+        StringTokenizer tokenizer = new StringTokenizer(Linea);
+        if (tokenizer.countTokens() == 4) {
+            if (entro2) {
+                Code.add("; Imprime variable ");
                 Code.add("mov bl," + vv);
                 Code.add("mov dl,bl");
                 Code.add("add dl,30h");
                 Code.add("mov ah, 02h");
+                Code.add("int 21h");
+                Code.add(";Salto de linea");
+                Code.add("mov Dx, Offset salto");
+                Code.add("mov ah,9");
                 Code.add("int 21h");
             }
         }
@@ -575,19 +598,195 @@ public class Metodos {
         tokenizer.nextToken();
         tokenizer.nextToken();
         String var = tokenizer.nextToken();
-        Code.add("mov ah,09");
-        Code.add("lea dx,salto" + nvar);
-        Code.add("int 21h");
-        Data.add("salto" + nvar + " DB ' ',10,13,'$'");
-        Data.add(var + " DB 0");
+        Code.add("; Leer");
         Code.add("mov ah,01h");
         Code.add("int 21h");
         Code.add("sub al, 30h");
         Code.add("mov " + var + ", al");
-        if (!asmVariables.contains(var)) {
-            asmVariables.add(var);
+        Code.add(";Salto de linea");
+        Code.add("mov Dx, Offset salto");
+        Code.add("mov ah,9");
+        Code.add("int 21h");
+
+    }
+
+    public void addOperaciones(String linea, int nvar, int cLine) {
+        StringTokenizer tokenizer = new StringTokenizer(linea);
+        String var = tokenizer.nextToken();
+        tokenizer.nextToken();
+        String var1 = tokenizer.nextToken();
+        String op = tokenizer.nextToken();
+        String var2 = tokenizer.nextToken();
+        if (op.equals("+")) {
+            Code.add(";Operacion suma ");
+            Code.add("mov bl, 0");
+            Code.add("add bl, " + var1);
+            Code.add("add bl, " + var2);
+            Code.add("mov " + var + ", bl");
+        }
+        if (op.equals("-")) {
+            Code.add("; Operacion resta");
+            Code.add("mov bl, 0");
+            Code.add("add bl, " + var1);
+            Code.add("sub bl, " + var2);
+            Code.add("mov " + var + ", bl");
+        }
+    }
+
+    public void AddAsmVar(String Liena) {
+        StringTokenizer tokenizer = new StringTokenizer(Liena);
+        tokenizer.nextToken();
+        String var = tokenizer.nextToken();
+        asmVariables.add(var);
+        String valor = vValor.get(vName.indexOf(var));
+        String Tipo = vTipo.get(vName.indexOf(var));
+        if (Tipo.equals("completo")) {
+            Data.add(var + " DB " + valor);
+        }
+        if (Tipo.equals("letras")) {
+            Data.add(var + " DB '" + valor + "' ,10,13,'$'");
         }
 
+    }
+
+    public void AddXveces(String liena, int nvar) {
+        StringTokenizer tokenizer = new StringTokenizer(liena);
+        String veces = "";
+        for (int i = 0; i < 9; i++) {
+            veces = tokenizer.nextToken();
+        }
+        String xv = "For" + nvar;
+        Code.add("mov Cx, " + veces);
+        Code.add(xv + ":");
+        asmControl.add(xv);
+    }
+
+    public void AddDurante(String linea, int nvar) {
+        StringTokenizer tokenizer = new StringTokenizer(linea);
+        tokenizer.nextToken();
+        tokenizer.nextToken();
+        String var1 = tokenizer.nextToken();
+        String op = tokenizer.nextToken();
+        String var2 = tokenizer.nextToken();
+        String wh = "while" + nvar;
+        String control = "FinWhile" + nvar+","+wh+","+var1+","+op+","+var2+","+nvar;
+        Code.add(";Inicio del While,");
+        Code.add(wh + ":");
+        asmControl.add(control);
+    }
+
+    public void AddVerdad(String liena, int nvar) {
+        StringTokenizer tokenizer = new StringTokenizer(liena);
+        tokenizer.nextToken();
+        tokenizer.nextToken();
+        String var1 = tokenizer.nextToken();
+        String op = tokenizer.nextToken();
+        String var2 = tokenizer.nextToken();
+
+        if (op.equals("<")) {
+            Code.add(";Inicio del if,");
+            String control = "If" + nvar + ",Igual" + nvar + ",FinVerdad" + nvar;
+            asmControl.add(control);
+            Code.add("mov al," + var1);
+            Code.add("cmp al," + var2);
+            Code.add("jc If" + nvar);
+            Code.add("jz Igual" + nvar);
+            Code.add("jmp FinVerdad" + nvar);
+            Code.add("If" + nvar + ":");
+        }
+        if (op.equals(">")) {
+            Code.add(";Inicio del if,");
+            String control = "If" + nvar + ",Igual" + nvar + ",FinVerdad" + nvar;
+            asmControl.add(control);
+            Code.add("mov al," + var2);
+            Code.add("cmp al," + var1);
+            Code.add("jc If" + nvar);
+            Code.add("jz Igual" + nvar);
+            Code.add("jmp FinVerdad" + nvar);
+            Code.add("If" + nvar + ":");
+        }
+        if (op.equals("==")) {
+            Code.add(";Inicio del if,");
+            String control = "Igual" + nvar + ",FinVerdad" + nvar;
+            asmControl.add(control);
+            Code.add("mov al," + var1);
+            Code.add("cmp al," + var2);
+            Code.add("jc If" + nvar);
+            Code.add("jz Igual" + nvar);
+            Code.add("jmp FinVerdad" + nvar);
+            Code.add("If" + nvar + ":");
+            Code.add("jmp FinVerdad" + nvar);
+            Code.add("Igual" + nvar + ":");
+
+        }
+
+    }
+
+    public void AddCerrar() {
+        String ultimo = asmControl.get(asmControl.size() - 1);
+        //System.out.println(ultimo);
+        if (ultimo.startsWith("For")) {
+            Code.add("; Cierre del for " + ultimo);
+            Code.add("loop " + ultimo);
+        }
+        if (ultimo.startsWith("If")) {
+            //String control = "If" + nvar+",Igual"+nvar+",Continua"+nvar;
+            String[] string = ultimo.split(",");
+            Code.add("jmp " + string[2]);
+            Code.add(string[1] + ":");
+            Code.add("jmp " + string[2]);
+            Code.add(string[2] + ":");
+        }
+
+        if (ultimo.startsWith("Igual")) {
+            String[] string = ultimo.split(",");
+            Code.add("; Cierre del if " + ultimo);
+            Code.add("jmp " + string[1]);
+            Code.add(string[1] + ":");
+        }
+
+        if (ultimo.startsWith("FinWhile")) {
+            //String control = "FinWhile" + nvar+","+wh+","+var1+","+op+","+var2,nvar;
+            String []string = ultimo.split(",");
+            Code.add("; Cierre del "+string[0]);
+            if (string[3].equals("<")) {
+                Code.add("mov al," + string[2]);
+                Code.add("cmp al," + string[4]);
+                Code.add("jc If" + string[5]);
+                Code.add("jz Igual" + string[5]);
+                Code.add("jmp " + string[0]);
+                Code.add("If" + string[5] + ":");
+                Code.add("jmp " + string[1]);
+                Code.add("Igual" + string[5] + ":");
+                Code.add("jmp " + string[0]);
+                Code.add(string[0] + ":");
+            }
+            if (string[3].equals(">")) {
+                Code.add("mov al," + string[4]);
+                Code.add("cmp al," + string[2]);
+                Code.add("jc If" + string[5]);
+                Code.add("jz Igual" + string[5]);
+                Code.add("jmp " + string[0]);
+                Code.add("If" + string[5] + ":");
+                Code.add("jmp " + string[1]);
+                Code.add("Igual" + string[5] + ":");
+                Code.add("jmp " + string[0]);
+                Code.add(string[0] + ":");
+            }
+            if (string[3].equals("==")) {
+                Code.add("mov al," + string[4]);
+                Code.add("cmp al," + string[2]);
+                Code.add("jc If" + string[5]);
+                Code.add("jz Igual" + string[5]);
+                Code.add("jmp " + string[0]);
+                Code.add("If" + string[5] + ":");
+                Code.add("jmp " + string[0]);
+                Code.add("Igual" + string[5] + ":");
+                Code.add("jmp " + string[1]);
+                Code.add(string[0] + ":");
+            }
+        }
+        asmControl.remove(asmControl.size()-1);
     }
 
     public void vaciarErrores() {
